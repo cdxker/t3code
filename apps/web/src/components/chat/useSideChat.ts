@@ -60,6 +60,7 @@ export function useSideChat(input: {
           targetThreadId,
           runId: source.runId,
           title: `${input.title ?? "Thread"} side chat`,
+          sideChat: true,
         },
       });
       if (result._tag === "Failure") {

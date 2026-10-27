@@ -1,4 +1,9 @@
-import type { EnvironmentId, ScopedThreadRef, ThreadId } from "@t3tools/contracts";
+import {
+  isListedThreadLineage,
+  type EnvironmentId,
+  type ScopedThreadRef,
+  type ThreadId,
+} from "@t3tools/contracts";
 import { foldSearchQuery, rankSearchItems, scoreThreadSearch } from "@t3tools/shared/paletteSearch";
 
 import type { EnvironmentThreadShell } from "./state/models.ts";
@@ -37,7 +42,7 @@ export function matchComposerThreadItems(input: {
       shell.environmentId === input.environmentId &&
       shell.id !== input.excludeThreadId &&
       shell.archivedAt === null &&
-      shell.lineage.relationshipToParent !== "subagent",
+      isListedThreadLineage(shell.lineage),
   );
   return rankSearchItems(candidates, (shell, options) =>
     scoreThreadSearch(query, threadSearchSubject(shell, null), input.now, {
