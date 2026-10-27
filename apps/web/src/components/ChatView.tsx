@@ -2635,7 +2635,19 @@ export default function ChatView(props: ChatViewProps) {
     onError: (message) => {
       if (activeThread) setThreadError(activeThread.id, message);
     },
+    getTurnSettings: () => {
+      const context = composerRef.current?.getSendContext();
+      return context?.providerAvailable
+        ? {
+            modelSelection: context.selectedModelSelection,
+            runtimeMode,
+            interactionMode: context.interactionMode,
+          }
+        : null;
+    },
   });
+  const openSideChatStable = useStableCallback(() => void sideChat.open());
+  const sendSideChatStable = useStableCallback((prompt: string) => void sideChat.open(prompt));
   const {
     onConfirmRevertStable,
     onForkFromRunStable,
@@ -2806,6 +2818,7 @@ export default function ChatView(props: ChatViewProps) {
     anchorNewTurn,
     acknowledgeActiveThreadWoke,
     handleInteractionModeChange,
+    onSideChat: sideChat.available ? sendSideChatStable : undefined,
     handleNewThreadInActiveProject,
     persistThreadSettingsForNextTurn,
   });
@@ -3467,6 +3480,7 @@ export default function ChatView(props: ChatViewProps) {
                               resumeCompactionTokens={resumeCompactionTokens}
                               keepFullHistory={keepFullHistory}
                               onToggleKeepFullHistory={toggleKeepFullHistoryStable}
+                              sideChatAvailable={sideChat.available}
                               onUsageLimitsCommand={
                                 usageLimitsOffered &&
                                 usageLimitsKey !== null &&
@@ -3804,7 +3818,7 @@ export default function ChatView(props: ChatViewProps) {
           onAddPullRequest={addPullRequestSurfaceStable}
           onAddPullRequests={addPullRequestsSurfaceStable}
           onAddDevice={addDeviceSurfaceStable}
-          onAddSideChat={sideChat.open}
+          onAddSideChat={openSideChatStable}
           browserAvailable={canOperatePreview && browserAvailable}
           terminalAvailable={activeProject !== null && canOperateTerminal}
           diffAvailable={isServerThread && isGitRepo}
