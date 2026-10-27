@@ -24,6 +24,7 @@ import { PullRequestDetailPanel } from "../pullRequest/PullRequestDetailPanel";
 import { PullRequestDetailGhost } from "../pullRequest/PullRequestGhosts";
 import { PullRequestsUnavailableState } from "../pullRequest/PullRequestsUnavailableState";
 import { ThreadPullRequestsPanel } from "../pullRequest/ThreadPullRequestsPanel";
+import ChatView from "../ChatView";
 
 const PreviewPanel = lazy(() =>
   import("../preview/PreviewPanel").then((module) => ({ default: module.PreviewPanel })),
@@ -33,7 +34,6 @@ const DevicePanel = lazy(() =>
   import("../device/DevicePanel").then((module) => ({ default: module.DevicePanel })),
 );
 const FilePreviewPanel = lazy(() => import("../files/FilePreviewPanel"));
-const ChatView = lazy(() => import("../ChatView"));
 
 export type RightPanelTerminalProps = Omit<
   PersistentThreadTerminalPanelProps,
@@ -170,20 +170,18 @@ export function RightPanelSurfaceContent(props: {
       return <ThreadPullRequestsPanel threadRef={threadRef} />;
     case "side-chat":
       return (
-        <Suspense fallback={null}>
-          <BackgroundThreadContext value>
-            <ComposerHandleContext value={null}>
-              <ChatView
-                key={surface.id}
-                environmentId={props.environmentId}
-                threadId={surface.threadId}
-                routeKind="server"
-                reserveTitleBarControlInset={false}
-                embedded
-              />
-            </ComposerHandleContext>
-          </BackgroundThreadContext>
-        </Suspense>
+        <BackgroundThreadContext value>
+          <ComposerHandleContext value={null}>
+            <ChatView
+              key={surface.id}
+              environmentId={props.environmentId}
+              threadId={surface.threadId}
+              routeKind="server"
+              reserveTitleBarControlInset={false}
+              embedded
+            />
+          </ComposerHandleContext>
+        </BackgroundThreadContext>
       );
     case "device":
       return (
